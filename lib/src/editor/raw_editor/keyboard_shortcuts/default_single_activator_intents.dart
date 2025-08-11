@@ -34,7 +34,7 @@ Map<SingleActivator, Intent> defaultSinlgeActivatorIntents() {
       control: !_isDesktopMacOS,
       meta: _isDesktopMacOS,
     ): const ToggleTextStyleIntent(
-      Attribute.bold,
+      Attribute.fontWeight,
     ),
     SingleActivator(
       LogicalKeyboardKey.keyU,

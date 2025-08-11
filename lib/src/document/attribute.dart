@@ -1,8 +1,9 @@
 import 'dart:collection' show LinkedHashSet, LinkedHashMap;
 
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show debugPrint, immutable;
 import 'package:quiver/core.dart';
 
+import 'attributes/font_weight_attribute.dart';
 import 'custom_attributes.dart';
 export 'custom_attributes.dart';
 
@@ -23,7 +24,7 @@ class Attribute<T> {
   final T value;
 
   static final Map<String, Attribute> _registry = LinkedHashMap.of({
-    Attribute.bold.key: Attribute.bold,
+    Attribute.fontWeight.key: Attribute.fontWeight,
     Attribute.subscript.key: Attribute.subscript,
     Attribute.superscript.key: Attribute.superscript,
     Attribute.italic.key: Attribute.italic,
@@ -53,6 +54,8 @@ class Attribute<T> {
     Attribute.image.key: Attribute.image,
     Attribute.video.key: Attribute.video,
   });
+
+  static const FontWeightAttribute fontWeight = FontWeightAttribute(400);
 
   static const BoldAttribute bold = BoldAttribute();
 
@@ -119,7 +122,7 @@ class Attribute<T> {
   static final registeredAttributeKeys = Set.unmodifiable(_registry.keys);
 
   static final inlineKeys = Set.unmodifiable(<String>{
-    Attribute.bold.key,
+    Attribute.fontWeight.key,
     Attribute.subscript.key,
     Attribute.superscript.key,
     Attribute.italic.key,
@@ -249,6 +252,9 @@ class Attribute<T> {
   Map<String, dynamic> toJson() => <String, dynamic>{key: value};
 
   static Attribute? fromKeyValue(String key, dynamic value) {
+
+    debugPrint("String $key, dynamic $value");
+
     final origin = _registry[key];
     if (origin == null) {
       return null;
@@ -323,6 +329,10 @@ class FontAttribute extends Attribute<String?> {
 class SizeAttribute extends Attribute<String?> {
   const SizeAttribute(String? val) : super('size', AttributeScope.inline, val);
 }
+
+// class TextFontWeightAttribute extends Attribute<String?> {
+//   const TextFontWeightAttribute(String? val) : super('w400', AttributeScope.inline, val);
+// }
 
 class LinkAttribute extends Attribute<String?> {
   const LinkAttribute(String? val) : super('link', AttributeScope.inline, val);

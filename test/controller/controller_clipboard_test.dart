@@ -66,7 +66,7 @@ void main() {
     test('clipboardSelection', () {
       controller
         ..replaceText(0, 4, 'bold plain italic', null)
-        ..formatText(0, 4, Attribute.bold)
+        ..formatText(0, 4, Attribute.fontWeight)
         ..formatText(11, 17, Attribute.italic)
         ..updateSelection(
           const TextSelection(baseOffset: 2, extentOffset: 14),
@@ -184,7 +184,7 @@ void main() {
           const TextSelection.collapsed(offset: 0),
           ChangeSource.local,
         )
-        ..formatText(6, 8, Attribute.bold)
+        ..formatText(6, 8, Attribute.fontWeight)
         ..updateSelection(
           const TextSelection(baseOffset: 4, extentOffset: 8),
           ChangeSource.local,
