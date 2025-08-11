@@ -39,35 +39,54 @@ class QuillToolbarFontSizeButtonState
           QuillToolbarFontSizeButtonOptions,
           QuillToolbarFontSizeButtonExtraOptions,
           String
-        > {
+        >
+    with TickerProviderStateMixin {
   final _menuController = MenuController();
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Map<String, String> get _items {
     final fontSizes =
         options.items ??
         {
-          context.loc.small: 'small',
-          context.loc.large: 'large',
-          context.loc.huge: 'huge',
-          context.loc.clear: '0',
+          '10': '10',
+          '12': '12',
+          '14': '14',
+          '16': '16',
+          '18': '18',
+          '20': '20',
+          '22': '22',
+          '24': '24',
+          '26': '26',
+          '28': '28',
+          '30': '30',
+          '32': '32',
+          '34': '34',
+          '36': '36',
+          context.loc.clear: '0'
         };
     return fontSizes;
   }
 
   String? getLabel(String? currentValue) {
-    return switch (currentValue) {
-      'small' => context.loc.small,
-      'large' => context.loc.large,
-      'huge' => context.loc.huge,
-      String() => currentValue,
-      null => null,
-    };
+    return currentValue;
   }
 
   String get _defaultDisplayText {
     return options.initialValue ??
         widget.options.defaultDisplayText ??
-        context.loc.fontSize;
+        '16'; // Default to 16px
   }
 
   @override
@@ -121,38 +140,59 @@ class QuillToolbarFontSizeButtonState
     }
     return MenuAnchor(
       controller: _menuController,
-      menuChildren: _items.entries.map((fontSize) {
-        return MenuItemButton(
-          key: ValueKey(fontSize.key),
-          onPressed: () {
-            final newValue = fontSize.value;
+      menuChildren: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+              maxHeight: 200), // Set a max height for the menu
+          child: RawScrollbar(
+            controller: _scrollController,
+            thumbVisibility: true,
+            thickness: 6.0,
+            radius: const Radius.circular(3.0),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: _items.entries.map((fontSize) {
+                  return MenuItemButton(
+                    key: ValueKey(fontSize.key),
+                    onPressed: () {
+                      final newValue = fontSize.value;
 
-            final keyName = _getKeyName(newValue);
-            setState(() {
-              if (keyName != context.loc.clear) {
-                currentValue = keyName ?? _defaultDisplayText;
-              } else {
-                currentValue = _defaultDisplayText;
-              }
-              if (keyName != null) {
-                controller.formatSelection(
-                  Attribute.fromKeyValue(
-                    Attribute.size.key,
-                    newValue == '0' ? null : getFontSize(newValue),
-                  ),
-                );
-                options.onSelected?.call(newValue);
-              }
-            });
-          },
-          child: Text(
-            fontSize.key.toString(),
-            style: TextStyle(
-              color: fontSize.value == '0' ? options.defaultItemColor : null,
+                      final keyName = _getKeyName(newValue);
+                      setState(() {
+                        if (keyName != context.loc.clear) {
+                          currentValue = keyName ?? _defaultDisplayText;
+                        } else {
+                          currentValue = _defaultDisplayText;
+                        }
+                        if (keyName != null) {
+                          controller.formatSelection(
+                            Attribute.fromKeyValue(
+                              Attribute.size.key,
+                              newValue == '0' ? null : getFontSize(newValue),
+                            ),
+                          );
+                          options.onSelected?.call(newValue);
+                        }
+                      });
+                      _menuController.close();
+                    },
+                    child: Text(
+                      '${fontSize.key}${fontSize.value == '0' ? '' : 'px'}',
+                      style: TextStyle(
+                        color: fontSize.value == '0'
+                            ? options.defaultItemColor
+                            : null,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ),
-        );
-      }).toList(),
+        ),
+      ],
       child: Builder(
         builder: (context) {
           final isMaterial3 = Theme.of(context).useMaterial3;
@@ -186,7 +226,7 @@ class QuillToolbarFontSizeButtonState
             enabled: hasFinalWidth,
             wrapper: (child) => Expanded(child: child),
             child: Text(
-              getLabel(currentValue) ?? '',
+              '${getLabel(currentValue) ?? 16}px',
               overflow: options.labelOverflow,
               style: options.style ?? TextStyle(fontSize: iconSize / 1.15),
             ),
