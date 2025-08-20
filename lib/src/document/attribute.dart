@@ -25,6 +25,7 @@ class Attribute<T> {
 
   static final Map<String, Attribute> _registry = LinkedHashMap.of({
     Attribute.fontWeight.key: Attribute.fontWeight,
+    Attribute.bold.key: Attribute.bold,
     Attribute.subscript.key: Attribute.subscript,
     Attribute.superscript.key: Attribute.superscript,
     Attribute.italic.key: Attribute.italic,
@@ -123,6 +124,7 @@ class Attribute<T> {
 
   static final inlineKeys = Set.unmodifiable(<String>{
     Attribute.fontWeight.key,
+    Attribute.bold.key,
     Attribute.subscript.key,
     Attribute.superscript.key,
     Attribute.italic.key,
