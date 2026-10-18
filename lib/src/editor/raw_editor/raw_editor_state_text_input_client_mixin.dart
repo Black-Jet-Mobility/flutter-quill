@@ -367,6 +367,9 @@ mixin RawEditorStateTextInputClientMixin on EditorState
   }
 
   @override
+  bool onFocusReceived() => false;
+
+  @override
   void showAutocorrectionPromptRect(int start, int end) {
     // this is called VERY OFTEN when editing a document, no longer throw
     // an exception
